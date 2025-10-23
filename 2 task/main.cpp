@@ -6,9 +6,9 @@ int main() {
 
     using namespace std;
     vector<int> nums; 
-
     string user_str = "1";
-    cout << "Вводите нужные числа через Enter. \nЕсли числа закончились, нажмите Enter с пустой строкой";
+    int result = 1;
+    cout << "Вводите нужные числа через Enter. \nЕсли числа закончились, нажмите Enter с пустой строкой\n";
     while (true)
     {
         getline(cin, user_str);
@@ -20,7 +20,10 @@ int main() {
             break;
         }
     }
-    
-    cout << nums.size();
+    for (int num : nums) {
+        result *= num;
+    }
+
+    cout << result;
     return 0;
 }
