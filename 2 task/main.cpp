@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "module.hpp"
 
 int main() {
 
@@ -20,9 +21,7 @@ int main() {
             break;
         }
     }
-    for (int num : nums) {
-        result *= num;
-    }
+    result = mul_vector_nums(nums);
 
     cout << result;
     return 0;
