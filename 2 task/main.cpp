@@ -23,7 +23,7 @@ int main() {
     srand((time(0)));
 
     // Генерация 5 случайных чисел от 1 до 10
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 10; ++i) {
         int random_num = rand() % 10 + 1;  // rand() % 10 даёт 0–9, +1 → 1–10
         nums.push_back(random_num);
     }
