@@ -2,21 +2,30 @@
 
 #ifndef MODULE // Защита от повторного включения
 #define MODULE
-#include "math.h"
+#include <cmath> // Исправлено: рекомендуется использовать <cmath> вместо <math.h> в C++
 
 namespace calculating {
-    /*
-    * Вычисляет значение по особой формуле из задания
-    * @param
-    */
+    /**
+     * @brief Вычисляет значение величины `a` по формуле:
+     *        a = (sqrt(|x - 1|) - pow(|y - 1|, 1.0/3.0)) / (1 + (x * x) / 2 + (y * y) / 4)
+     * @param x, y, z — входные значения (вещественные числа)
+     * @return Значение выражения `a` типа float
+     */
     float calculate_a(float x, float y, float z);
-    /*
-    Вычисляет значение по особой формуле из задания
-    */
+
+    /**
+     * @brief Вычисляет значение величины `b` по формуле:
+     *        b = (1 + pow(z, 2) / 2 + pow(z, 4) / 4) / (1 + pow(z, 2))
+     * @param x, y, z — входные значения (вещественные числа)
+     * @return Значение выражения `b` типа float
+     *
+     * @note При z = 0 функция возвращает 1.0.
+     */
     float calculate_b(float x, float y, float z);
 }
 
 namespace constants {
-    float const e = 0.0001; 
+    /// @brief Малая величина для сравнения вещественных чисел с учётом погрешности
+    constexpr float e = 0.0001f; 
 }
 #endif
