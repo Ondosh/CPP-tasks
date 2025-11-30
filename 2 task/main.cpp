@@ -9,12 +9,14 @@ int main() {
     using namespace std;
     using namespace mathfunc;
 
+    // Проверка правильной работы функции
     assert(sum_of_powers({}) == 0);
     assert(sum_of_powers({3}) == 9);        // 3^2 = 9
     assert(sum_of_powers({1, 2, 3}) == 14); // 1^2 + 2^2 + 3^2 = 1 + 4 + 9 = 14
     assert(sum_of_powers({2, 2}) == 8);     // 4 + 4 = 8
     assert(sum_of_powers({1, 1, 1, 1}) == 4);
 
+    // Объявляем вектор чисел
     vector<int> nums;
 
     // Инициализация генератора случайных чисел
