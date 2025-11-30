@@ -6,6 +6,7 @@
 int main() {
 
     using namespace std;
+    using namespace mathfunc;
     vector<int> nums; 
     string user_str = "1";
     int result = 1;
@@ -21,7 +22,7 @@ int main() {
             break;
         }
     }
-    result = mul_vector_nums(nums);
+    result = sum_of_powers(nums);
 
     cout << result;
     return 0;
