@@ -8,7 +8,8 @@
 int main() {
     using namespace std;
     using namespace mathfunc;
-
+    using namespace auxiliary;
+    
     // Проверка правильной работы функции
     assert(sum_of_powers({}) == 0);
     assert(sum_of_powers({3}) == 9);        // 3^2 = 9
@@ -16,27 +17,22 @@ int main() {
     assert(sum_of_powers({2, 2}) == 8);     // 4 + 4 = 8
     assert(sum_of_powers({1, 1, 1, 1}) == 4);
 
-    // Объявляем вектор чисел
-    vector<int> nums;
-
     // Инициализация генератора случайных чисел
     srand((time(0)));
+    int n = 0;
 
-    // Генерация 5 случайных чисел от 1 до 10
-    for (int i = 0; i < 10; ++i) {
-        int random_num = rand() % 10 + 1;  // rand() % 10 даёт 0–9, +1 → 1–10
-        nums.push_back(random_num);
-    }
+    cout << "Сколько чисел вы хотите видеть в массиве? Введите целое число: ";
+    cin >> n;
+
+    // Инициализация вектора и создание массива случайных чисел с указанной пользователем длиной
+    vector<int> nums = random_vector(n);
 
     // Вычисление результата
     int result = sum_of_powers(nums);
 
-    // Вывод чисел (опционально)
+    // Вывод чисел
     cout << "Случайные числа: ";
-    for (size_t i = 0; i < nums.size(); ++i) {
-        if (i > 0) cout << ", ";
-        cout << nums[i];
-    }
+    print_vector_by_10(nums);
     cout << "\nРезультат: " << result << endl;
 
     return 0;
