@@ -13,4 +13,8 @@ namespace auxiliary {
     std::vector<int> random_vector(int n);
     void print_vector_by_10(const std::vector<int>& vec);
 }
+namespace file_work {
+    bool save_vector_to_file(const std::vector<int>& vec, const std::string& filename);
+    std::vector<int> load_vector_from_file(const std::string& filename);
+}
 #endif

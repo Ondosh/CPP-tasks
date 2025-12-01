@@ -4,6 +4,7 @@
 #include "module.hpp"
 #include <ctime>
 #include <iostream>
+#include <fstream>
 
 namespace mathfunc {
 
@@ -53,4 +54,58 @@ namespace auxiliary {
             }
         }
     }
+}
+
+namespace file_work {
+    /**
+     * @brief Сохраняет вектор целых чисел в текстовый файл (по одному числу на строке).
+     * @param vec — вектор для сохранения
+     * @param filename — имя файла
+     * @return true при успехе, false при ошибке открытия файла
+     */
+    bool save_vector_to_file(const std::vector<int>& vec, const std::string& filename) {
+        std::ofstream file(filename);
+        if (!file.is_open()) {
+            std::cerr << "Ошибка: не удалось открыть файл для записи: " << filename << "\n";
+            return false;
+        }
+
+        for (const int& num : vec) {
+            file << num << '\n';
+        }
+
+        file.close();
+        return true;
+    }
+    
+    /**
+     * @brief Загружает вектор целых чисел из текстового файла (по одному числу на строке).
+     * Пропускает пустые строки, останавливается при первой ошибке формата.
+     * @param filename — имя файла
+     * @return вектор прочитанных чисел (пустой, если файл не найден или ошибка)
+     */
+    std::vector<int> load_vector_from_file(const std::string& filename) {
+        std::ifstream file(filename);
+        std::vector<int> vec;
+
+        if (!file.is_open()) {
+            std::cerr << "Ошибка: не удалось открыть файл для чтения: " << filename << "\n";
+            return vec; // пустой вектор
+        }
+
+        int num;
+        while (file >> num) {
+            vec.push_back(num);
+        }
+
+        // Проверим, не произошла ли ошибка чтения (например, буква вместо числа)
+        if (file.bad()) {
+            std::cerr << "Ошибка: сбой при чтении файла " << filename << "\n";
+        }
+        // Если file.eof() — всё в порядке, просто конец файла
+        // Если file.fail() (но не bad) — например, "abc" вместо числа → игнорируем остаток
+
+        file.close();
+        return vec;
+    }        
 }
