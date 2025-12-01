@@ -2,6 +2,8 @@
 
 #include <vector>
 #include "module.hpp"
+#include <ctime>
+#include <iostream>
 
 namespace mathfunc {
 
@@ -23,3 +25,32 @@ namespace mathfunc {
         return result;
     }
 } 
+
+namespace auxiliary {
+    std::vector<int> random_vector(int n) {
+        using namespace std;
+
+        srand((time(0)));
+
+        vector<int> nums;
+
+        for (size_t i = 0; i < n; i++)
+        {
+            int random_num = rand() % 10 + 1;  // rand() % 10 даёт 0–9, +1 → 1–10
+            nums.push_back(random_num);
+        }
+        
+        return nums;
+    }
+
+    void print_vector_by_10(const std::vector<int>& vec) {
+        for (size_t i = 0; i < vec.size(); ++i) {
+            std::cout << vec[i] << " ";
+
+            // После каждого 10-го элемента (индексы 9, 19, 29, ...) — перенос строки
+            if ((i + 1) % 10 == 0) {
+                std::cout << std::endl;
+            }
+        }
+    }
+}
