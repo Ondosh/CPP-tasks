@@ -84,19 +84,21 @@ int main() {
     cout << "\nРезультат (сумма квадратов): " << result << "\n\n";
 
     // Сохранение
-    string save_filename;
-    cout << "Сохранить этот массив в файл? (введите имя файла или '-' чтобы пропустить): " << flush;
-    cin >> save_filename;
-
-    if (save_filename != "-") {
-        if (save_array_to_file(nums, count, save_filename)) {
-            cout << "Массив успешно сохранён в файл \"" << save_filename << "\".\n";
-        } else {
-            cerr << "Предупреждение: не удалось сохранить файл.\n";
+    if (mode == 1){
+        string save_filename;
+        cout << "Сохранить этот массив в файл? (введите имя файла или '-' чтобы пропустить): " << flush;
+        cin >> save_filename;  /* code */
+    
+        if (save_filename != "-") {
+            if (save_array_to_file(nums, count, save_filename)) {
+                cout << "Массив успешно сохранён в файл \"" << save_filename << "\".\n";
+            } else {
+                cerr << "Предупреждение: не удалось сохранить файл.\n";
+            }
         }
     }
 
-    // ОСВОБОЖДЕНИЕ ПАМЯТИ
+    // Освобождение памяти
     delete[] nums;
     nums = nullptr;
 
