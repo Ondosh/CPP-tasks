@@ -21,7 +21,7 @@ namespace mathfunc {
 
 namespace auxiliary {
     // Создаёт массив из n случайных целых (1–10)
-    int* random_array(int n, size_t& out_size) {
+    int* random_array(size_t n, size_t& out_size) {
         if (n <= 0) {
             out_size = 0;
             return nullptr;
@@ -62,7 +62,7 @@ namespace file_work {
         if (!arr) return false;
         std::ofstream file(filename);
         if (!file.is_open()) {
-            std::cerr << "Ошибка: не удалось открыть файл для записи: " << filename << "\n";
+            std::cerr << "Ошибка: не удалось открыть файл для записи: " << filename << "\n"; //throw exception
             return false;
         }
         for (size_t i = 0; i < size; ++i) {

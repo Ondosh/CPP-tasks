@@ -31,8 +31,6 @@ int sum_of_powers(const std::vector<int>& numbers) {
 namespace auxiliary {
 
 std::vector<int> random_vector(int n) {
-    // Инициализация генератора случайных чисел
-    std::srand(time(0));
 
     std::vector<int> nums;
     nums.reserve(n);  // Оптимизация: избегаем лишних реаллокаций

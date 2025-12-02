@@ -55,7 +55,7 @@ int main() {
             cerr << "Ошибка: некорректное количество чисел.\n";
             return 1;
         }
-        
+
         nums = random_array(n, count);
         if (!nums) {
             cerr << "Ошибка: не удалось выделить память.\n";
@@ -68,7 +68,7 @@ int main() {
         cout << "\nВведите имя файла для загрузки: " << flush;
         cin >> filename;
 
-        nums = load_array_from_file(filename.c_str(), count);
+        nums = load_array_from_file(filename, count);
         if (!nums) {
             cerr << "Ошибка: не удалось загрузить данные из файла.\n";
             return 1;
