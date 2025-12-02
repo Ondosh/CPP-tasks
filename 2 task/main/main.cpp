@@ -1,3 +1,9 @@
+// Главная программа: интерфейс пользователя и управление логикой.
+// Поддерживает два режима:
+//   1) Генерация случайного массива
+//   2) Загрузка массива из файла
+// После обработки выводит сумму квадратов элементов и опционально сохраняет массив.
+
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -11,21 +17,17 @@ int main() {
     using namespace auxiliary;
     using namespace file_work;
 
-    // Тесты (будем использовать временные массивы)
+    // Тесты функции sum_of_powers
     {
-        assert(sum_of_powers(nullptr, 0) == 0);
-
+        assert(sum_of_powers(nullptr, 0) == 0);           // пустой массив
         int a1[] = {3};
-        assert(sum_of_powers(a1, 1) == 9);
-
+        assert(sum_of_powers(a1, 1) == 9);               // 3^2 = 9
         int a2[] = {1, 2, 3};
-        assert(sum_of_powers(a2, 3) == 14);
-
+        assert(sum_of_powers(a2, 3) == 14);              // 1+4+9 = 14
         int a3[] = {2, 2};
-        assert(sum_of_powers(a3, 2) == 8);
-
+        assert(sum_of_powers(a3, 2) == 8);               // 4+4 = 8
         int a4[] = {1, 1, 1, 1};
-        assert(sum_of_powers(a4, 4) == 4);
+        assert(sum_of_powers(a4, 4) == 4);               // 4×1 = 4
     }
 
     cout << "Выберите режим работы:\n"
@@ -43,7 +45,7 @@ int main() {
     size_t count = 0;
 
     if (mode == 1) {
-        // Генерация случайного массива
+        // Генерация случайного массива (числа от 1 до 10)
         srand(time(0));
 
         const int MAX_SIZE = 1'000'000;
@@ -53,7 +55,7 @@ int main() {
             cerr << "Ошибка: некорректное количество чисел.\n";
             return 1;
         }
-
+        
         nums = random_array(n, count);
         if (!nums) {
             cerr << "Ошибка: не удалось выделить память.\n";
@@ -61,7 +63,7 @@ int main() {
         }
 
     } else if (mode == 2) {
-        // Загрузка из файла
+        // Загрузка массива из файла (по одному числу на строку)
         string filename;
         cout << "\nВведите имя файла для загрузки: " << flush;
         cin >> filename;
@@ -75,20 +77,20 @@ int main() {
         cout << "\nЗагружено " << count << " чисел из файла \"" << filename << "\".\n";
     }
 
-    // Вычисление
+    // Вычисление суммы квадратов
     int result = sum_of_powers(nums, count);
 
-    // Вывод
+    // Вывод результата и массива (по 10 элементов в строке)
     cout << "\nМассив:\n";
     print_array_by_10(nums, count);
     cout << "\nРезультат (сумма квадратов): " << result << "\n\n";
 
-    // Сохранение
-    if (mode == 1){
+    // Сохранение сгенерированного массива (если был режим 1)
+    if (mode == 1) {
         string save_filename;
         cout << "Сохранить этот массив в файл? (введите имя файла или '-' чтобы пропустить): " << flush;
-        cin >> save_filename;  /* code */
-    
+        cin >> save_filename;
+
         if (save_filename != "-") {
             if (save_array_to_file(nums, count, save_filename)) {
                 cout << "Массив успешно сохранён в файл \"" << save_filename << "\".\n";
@@ -98,7 +100,7 @@ int main() {
         }
     }
 
-    // Освобождение памяти
+    // Очистка выделенной памяти
     delete[] nums;
     nums = nullptr;
 

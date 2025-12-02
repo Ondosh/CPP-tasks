@@ -1,3 +1,6 @@
+// Author: Ondosh
+// Реализация функций, объявленных в module.hpp.
+
 #include "module.hpp"
 #include <iostream>
 #include <fstream>
@@ -5,6 +8,7 @@
 #include <ctime>
 
 namespace mathfunc {
+    // Сумма квадратов элементов массива
     int sum_of_powers(const int* arr, size_t size) {
         if (!arr || size == 0) return 0;
         int result = 0;
@@ -16,6 +20,7 @@ namespace mathfunc {
 }
 
 namespace auxiliary {
+    // Создаёт массив из n случайных целых (1–10)
     int* random_array(int n, size_t& out_size) {
         if (n <= 0) {
             out_size = 0;
@@ -29,13 +34,14 @@ namespace auxiliary {
         }
 
         for (int i = 0; i < n; ++i) {
-            arr[i] = std::rand() % 10 + 1; // 1–10
+            arr[i] = std::rand() % 10 + 1;
         }
 
         out_size = static_cast<size_t>(n);
         return arr;
     }
 
+    // Вывод массива: до 10 чисел в строке
     void print_array_by_10(const int* arr, size_t size) {
         if (!arr) return;
         for (size_t i = 0; i < size; ++i) {
@@ -51,6 +57,7 @@ namespace auxiliary {
 }
 
 namespace file_work {
+    // Сохраняет массив в файл (по одному числу на строку)
     bool save_array_to_file(const int* arr, size_t size, const std::string& filename) {
         if (!arr) return false;
         std::ofstream file(filename);
@@ -64,6 +71,7 @@ namespace file_work {
         return true;
     }
 
+    // Загружает массив из файла
     int* load_array_from_file(const std::string& filename, size_t& out_size) {
         std::ifstream file(filename);
         if (!file.is_open()) {
@@ -72,14 +80,14 @@ namespace file_work {
             return nullptr;
         }
 
-        // Сначала подсчитаем количество чисел
+        // Подсчёт количества чисел
         int temp;
         size_t count = 0;
         while (file >> temp) {
             ++count;
         }
-        file.clear(); // сбросить флаг eof
-        file.seekg(0); // вернуться в начало
+        file.clear();
+        file.seekg(0); // возврат в начало
 
         if (count == 0) {
             out_size = 0;
