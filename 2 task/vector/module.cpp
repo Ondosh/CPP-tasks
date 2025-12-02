@@ -1,111 +1,120 @@
-// Реализация математических функций модуля
+/**
+ * @file module.cpp
+ * @brief Реализация функций, объявленных в module.hpp.
+ *
+ * Содержит определения для трёх пространств имён:
+ * - mathfunc
+ * - auxiliary
+ * - file_work
+ */
 
 #include <vector>
+#include <cstdlib>   // rand(), srand()
+#include <ctime>     // time()
+#include <iostream>  // cout, cerr
+#include <fstream>   // ofstream, ifstream
+#include <string>    // std::string
 #include "module.hpp"
-#include <ctime>
-#include <iostream>
-#include <fstream>
 
 namespace mathfunc {
 
-    /**
-     * @brief Вычисляет сумму квадратов всех элементов вектора целых чисел.
-     * @param numbers — константная ссылка на вектор целых чисел
-     * @return Сумма квадратов элементов вектора (тип int)
-     * @pre Вектор может быть пустым — в этом случае возвращается 0.
-     * @post Результат всегда неотрицателен (>= 0).
-     * @example
-     * std::vector<int> v = {2, 3, 4};
-     * int s = sum_of_powers(v); // s == 4 + 9 + 16 == 29
-     */
-    int sum_of_powers(const std::vector<int>& numbers) {
-        int result = 0;
-        for (int num : numbers) {
-            result += num * num;
-        }
-        return result;
+int sum_of_powers(const std::vector<int>& numbers) {
+    int result = 0;
+    for (int num : numbers) {
+        result += num * num;  // Квадрат числа
     }
-} 
+    return result;
+}
+
+}
 
 namespace auxiliary {
-    std::vector<int> random_vector(int n) {
-        using namespace std;
 
-        srand((time(0)));
+std::vector<int> random_vector(int n) {
+    // Инициализация генератора случайных чисел
+    std::srand(time(0));
 
-        vector<int> nums;
+    std::vector<int> nums;
+    nums.reserve(n);  // Оптимизация: избегаем лишних реаллокаций
 
-        for (size_t i = 0; i < n; i++)
-        {
-            int random_num = rand() % 10 + 1;  // rand() % 10 даёт 0–9, +1 → 1–10
-            nums.push_back(random_num);
-        }
-        
-        return nums;
+    for (int i = 0; i < n; ++i) {
+        // Генерируем число от 1 до 10 включительно
+        int random_num = std::rand() % 10 + 1;
+        nums.push_back(random_num);
+    }
+    return nums;
+}
+
+void print_vector_by_10(const std::vector<int>& vec) {
+    if (vec.empty()) {
+        std::cout << "(пустой массив)\n";
+        return;
     }
 
-    void print_vector_by_10(const std::vector<int>& vec) {
-        for (size_t i = 0; i < vec.size(); ++i) {
-            std::cout << vec[i] << " ";
-
-            // После каждого 10-го элемента (индексы 9, 19, 29, ...) — перенос строки
-            if ((i + 1) % 10 == 0) {
-                std::cout << std::endl;
-            }
+    for (size_t i = 0; i < vec.size(); ++i) {
+        std::cout << vec[i];
+        // Добавляем пробел, если это не последний элемент в строке
+        if ((i + 1) % 10 == 0) {
+            std::cout << '\n';  // Перенос после 10-го, 20-го и т.д.
+        } else if (i + 1 < vec.size()) {
+            std::cout << " ";
         }
+    }
+    // Если последняя строка неполная — завершаем её переводом строки
+    if (vec.size() % 10 != 0) {
+        std::cout << '\n';
     }
 }
+
+} // namespace auxiliary
 
 namespace file_work {
-    /**
-     * @brief Сохраняет вектор целых чисел в текстовый файл (по одному числу на строке).
-     * @param vec — вектор для сохранения
-     * @param filename — имя файла
-     * @return true при успехе, false при ошибке открытия файла
-     */
-    bool save_vector_to_file(const std::vector<int>& vec, const std::string& filename) {
-        std::ofstream file(filename);
-        if (!file.is_open()) {
-            std::cerr << "Ошибка: не удалось открыть файл для записи: " << filename << "\n";
-            return false;
-        }
 
-        for (const int& num : vec) {
-            file << num << '\n';
-        }
-
-        file.close();
-        return true;
+bool save_vector_to_file(const std::vector<int>& vec, const std::string& filename) {
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Ошибка: не удалось открыть файл для записи: " << filename << "\n";
+        return false;
     }
-    
-    /**
-     * @brief Загружает вектор целых чисел из текстового файла (по одному числу на строке).
-     * Пропускает пустые строки, останавливается при первой ошибке формата.
-     * @param filename — имя файла
-     * @return вектор прочитанных чисел (пустой, если файл не найден или ошибка)
-     */
-    std::vector<int> load_vector_from_file(const std::string& filename) {
-        std::ifstream file(filename);
-        std::vector<int> vec;
 
-        if (!file.is_open()) {
-            std::cerr << "Ошибка: не удалось открыть файл для чтения: " << filename << "\n";
-            return vec; // пустой вектор
-        }
+    for (const int& num : vec) {
+        file << num << '\n';
+    }
 
-        int num;
-        while (file >> num) {
-            vec.push_back(num);
-        }
+    // Проверка на ошибки при записи
+    if (file.fail()) {
+        std::cerr << "Ошибка: сбой при записи в файл: " << filename << "\n";
+        return false;
+    }
 
-        // Проверим, не произошла ли ошибка чтения (например, буква вместо числа)
-        if (file.bad()) {
-            std::cerr << "Ошибка: сбой при чтении файла " << filename << "\n";
-        }
-        // Если file.eof() — всё в порядке, просто конец файла
-        // Если file.fail() (но не bad) — например, "abc" вместо числа → игнорируем остаток
-
-        file.close();
-        return vec;
-    }        
+    file.close();
+    return true;
 }
+
+std::vector<int> load_vector_from_file(const std::string& filename) {
+    std::ifstream file(filename);
+    std::vector<int> vec;
+
+    if (!file.is_open()) {
+        std::cerr << "Ошибка: не удалось открыть файл для чтения: " << filename << "\n";
+        return vec; // пустой вектор
+    }
+
+    int num;
+    while (file >> num) {
+        vec.push_back(num);
+    }
+
+    // Проверка состояния потока после чтения
+    if (file.bad()) {
+        std::cerr << "Ошибка: критическая ошибка ввода/вывода при чтении " << filename << "\n";
+    } else if (file.fail() && !file.eof()) {
+        // Например, встречена буква вместо числа
+        std::cerr << "Предупреждение: некорректные данные в файле " << filename << " (чтение остановлено)\n";
+    }
+
+    file.close();
+    return vec;
+}
+
+} // namespace file_work
