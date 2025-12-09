@@ -12,7 +12,7 @@
 #include <string>
 #include <limits>
 #include <stdexcept>
-#include "module.hpp"
+#include "arrays.hpp"
 
 int main() {
     using namespace std;
