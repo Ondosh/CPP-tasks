@@ -22,7 +22,7 @@ int main() {
 
     // Тесты функции sum_of_powers
     {
-        assert(sum_of_powers(nullptr, 0) == 0);           // пустой массив
+        assert(mathfunc::sum_of_powers<int>(nullptr, 0) == 0);           // пустой массив
         int a1[] = {3};
         assert(sum_of_powers(a1, 1) == 9);               // 3^2 = 9
         int a2[] = {1, 2, 3};
@@ -60,7 +60,7 @@ int main() {
                 throw invalid_argument("Некорректное количество чисел.");
             }
 
-            nums = random_array(n, count);
+            nums = auxiliary::random_array<int>(n, count);
             if (!nums) {
                 throw runtime_error("Не удалось выделить память для массива.");
             }
