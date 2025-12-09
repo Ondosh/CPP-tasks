@@ -21,7 +21,7 @@ namespace auxiliary {
     // Генерирует массив из n случайных чисел (от 1 до 10).
     // Возвращает указатель на новый массив или nullptr при ошибке.
     // out_size — получает фактический размер массива.
-    int* random_array(int n, size_t& out_size);
+    int* random_array(size_t n, size_t& out_size);
 
     // Выводит массив на экран, по 10 элементов в строке.
     void print_array_by_10(const int* arr, size_t size);
