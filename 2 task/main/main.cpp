@@ -11,6 +11,7 @@
 #include <cassert>
 #include <string>
 #include <limits>
+#include <stdexcept>
 #include "module.hpp"
 
 int main() {
@@ -32,115 +33,124 @@ int main() {
         assert(sum_of_powers(a4, 4) == 4);               // 4×1 = 4
     }
 
-    cout << "Выберите режим работы:\n"
-         << "1 - сгенерировать случайный массив (ввести длину)\n"
-         << "2 - загрузить массив из файла\n"
-         << "3 - ввести массив с клавиатуры\n"
-         << "Ваш выбор (1, 2 или 3): " << flush;
-
-    int mode;
-    if (!(cin >> mode) || (mode < 1 || mode > 3)) {
-        cerr << "Ошибка: нужно ввести 1, 2 или 3.\n";
-        return 1;
-    }
-
     int* nums = nullptr;
     size_t count = 0;
+    string filename;
+    int mode = 0;
 
-    if (mode == 1) {
-        // Генерация случайного массива (числа от 1 до 10)
-        srand(time(0));
+    try {
+        cout << "Выберите режим работы:\n"
+             << "1 - сгенерировать случайный массив (ввести длину)\n"
+             << "2 - загрузить массив из файла\n"
+             << "3 - ввести массив с клавиатуры\n"
+             << "Ваш выбор (1, 2 или 3): " << flush;
 
-        const int MAX_SIZE = 1'000'000;
-        int n;
-        cout << "\nСколько чисел сгенерировать? (1–" << MAX_SIZE << "): " << flush;
-        if (!(cin >> n) || n <= 0 || n > MAX_SIZE) {
-            cerr << "Ошибка: некорректное количество чисел.\n";
-            return 1;
+        if (!(cin >> mode) || (mode < 1 || mode > 3)) {
+            throw invalid_argument("Нужно ввести 1, 2 или 3.");
         }
 
-        nums = random_array(n, count);
-        if (!nums) {
-            cerr << "Ошибка: не удалось выделить память.\n";
-            return 1;
+        if (mode == 1) {
+            // Генерация случайного массива (числа от 1 до 10)
+            srand(time(0));
+
+            const int MAX_SIZE = 1'000'000;
+            int n;
+            cout << "\nСколько чисел сгенерировать? (1–" << MAX_SIZE << "): " << flush;
+            if (!(cin >> n) || n <= 0 || n > MAX_SIZE) {
+                throw invalid_argument("Некорректное количество чисел.");
+            }
+
+            nums = random_array(n, count);
+            if (!nums) {
+                throw runtime_error("Не удалось выделить память для массива.");
+            }
+
+        } else if (mode == 2) {
+            // Загрузка массива из файла (по одному числу на строку)
+            cout << "\nВведите имя файла для загрузки: " << flush;
+            cin >> filename;
+
+            nums = load_array_from_file(filename, count);
+            if (!nums) {
+                throw runtime_error("Не удалось загрузить данные из файла '" + filename + "'.");
+            }
+
+            cout << "\nЗагружено " << count << " чисел из файла \"" << filename << "\".\n";
+            
+        } else if (mode == 3) {
+            // Ввод массива с клавиатуры
+            cout << "\n=== Режим ввода с клавиатуры ===\n";
+            
+            int n;
+            cout << "Сколько чисел вы хотите ввести? (введите количество): " << flush;
+            if (!(cin >> n) || n <= 0) {
+                throw invalid_argument("Некорректное количество чисел.");
+            }
+            
+            const int MAX_SIZE_KEYBOARD = 10000; // Ограничение для ручного ввода
+            if (n > MAX_SIZE_KEYBOARD) {
+                throw invalid_argument("Для ручного ввода максимальное количество - " + 
+                                     to_string(MAX_SIZE_KEYBOARD) + " чисел.");
+            }
+            
+            count = n;
+            nums = new int[count];
+            
+            cout << "Введите " << n << " целых чисел (через пробел или каждое с новой строки):" << endl;
+            
+            for (size_t i = 0; i < count; i++) {
+                if (!(cin >> nums[i])) {
+                    throw invalid_argument("Некорректный ввод числа " + to_string(i + 1) + ".");
+                }
+            }
+            
+            // Очистка буфера после ввода
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            
+            cout << "\nУспешно введено " << n << " чисел.\n";
         }
 
-    } else if (mode == 2) {
-        // Загрузка массива из файла (по одному числу на строку)
-        string filename;
-        cout << "\nВведите имя файла для загрузки: " << flush;
-        cin >> filename;
+        // Вычисление суммы квадратов
+        int result = sum_of_powers(nums, count);
 
-        nums = load_array_from_file(filename, count);
-        if (!nums) {
-            cerr << "Ошибка: не удалось загрузить данные из файла.\n";
-            return 1;
-        }
+        // Вывод результата и массива (по 10 элементов в строке)
+        cout << "\nМассив:\n";
+        print_array_by_10(nums, count);
+        cout << "\nРезультат (сумма квадратов): " << result << "\n\n";
 
-        cout << "\nЗагружено " << count << " чисел из файла \"" << filename << "\".\n";
-        
-    } else if (mode == 3) {
-        // Ввод массива с клавиатуры
-        cout << "\n=== Режим ввода с клавиатуры ===\n";
-        
-        int n;
-        cout << "Сколько чисел вы хотите ввести? (введите количество): " << flush;
-        if (!(cin >> n) || n <= 0) {
-            cerr << "Ошибка: некорректное количество чисел.\n";
-            return 1;
-        }
-        
-        const int MAX_SIZE_KEYBOARD = 10000; // Ограничение для ручного ввода
-        if (n > MAX_SIZE_KEYBOARD) {
-            cerr << "Ошибка: для ручного ввода максимальное количество - " 
-                 << MAX_SIZE_KEYBOARD << " чисел.\n";
-            return 1;
-        }
-        
-        count = n;
-        nums = new int[count];
-        if (!nums) {
-            cerr << "Ошибка: не удалось выделить память.\n";
-            return 1;
-        }
-        
-        cout << "Введите " << n << " целых чисел (через пробел или каждое с новой строки):" << endl;
-        
-        for (size_t i = 0; i < count; i++) {
-            if (!(cin >> nums[i])) {
-                cerr << "Ошибка: некорректный ввод числа " << i + 1 << ".\n";
-                delete[] nums;
-                return 1;
+        // Сохранение массива (если был режим 1 или 3)
+        if (mode == 1 || mode == 3) {
+            string save_filename;
+            cout << "Сохранить этот массив в файл? (введите имя файла или '-' чтобы пропустить): " << flush;
+            cin >> save_filename;
+
+            if (save_filename != "-") {
+                try {
+                    if (save_array_to_file(nums, count, save_filename)) {
+                        cout << "Массив успешно сохранён в файл \"" << save_filename << "\".\n";
+                    } else {
+                        cerr << "Предупреждение: не удалось сохранить файл.\n";
+                    }
+                } catch (const exception& e) {
+                    cerr << "Ошибка при сохранении: " << e.what() << endl;
+                }
             }
         }
+
+    } catch (const exception& e) {
+        // Освобождаем память при возникновении исключения
+        delete[] nums;
+        nums = nullptr;
         
-        // Очистка буфера после ввода
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cerr << "Ошибка: " << e.what() << "\n";
+        return 1;
+    } catch (...) {
+        // Обработка любых других исключений
+        delete[] nums;
+        nums = nullptr;
         
-        cout << "\nУспешно введено " << n << " чисел.\n";
-    }
-
-    // Вычисление суммы квадратов
-    int result = sum_of_powers(nums, count);
-
-    // Вывод результата и массива (по 10 элементов в строке)
-    cout << "\nМассив:\n";
-    print_array_by_10(nums, count);
-    cout << "\nРезультат (сумма квадратов): " << result << "\n\n";
-
-    // Сохранение массива (если был режим 1 или 3)
-    if (mode == 1 || mode == 3) {
-        string save_filename;
-        cout << "Сохранить этот массив в файл? (введите имя файла или '-' чтобы пропустить): " << flush;
-        cin >> save_filename;
-
-        if (save_filename != "-") {
-            if (save_array_to_file(nums, count, save_filename)) {
-                cout << "Массив успешно сохранён в файл \"" << save_filename << "\".\n";
-            } else {
-                cerr << "Предупреждение: не удалось сохранить файл.\n";
-            }
-        }
+        cerr << "Неизвестная ошибка.\n";
+        return 1;
     }
 
     // Очистка выделенной памяти
