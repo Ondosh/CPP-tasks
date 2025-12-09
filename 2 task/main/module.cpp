@@ -1,5 +1,6 @@
 // Author: Ondosh
-// Реализация функций, объявленных в module.hpp.
+// Реализация функций модуля для работы с массивами целых чисел
+// Соответствует объявлениям в module.hpp
 
 #include "module.hpp"
 #include <iostream>
@@ -8,8 +9,14 @@
 #include <ctime>
 
 namespace mathfunc {
-    // Сумма квадратов элементов массива
+    /**
+     * @brief Вычисляет сумму квадратов элементов массива
+     * @param arr Указатель на массив целых чисел (допускается nullptr)
+     * @param size Количество элементов в массиве
+     * @return Сумма квадратов всех элементов массива или 0, если массив пуст или не существует
+     */
     int sum_of_powers(const int* arr, size_t size) {
+        // Сумма квадратов элементов массива
         if (!arr || size == 0) return 0;
         int result = 0;
         for (size_t i = 0; i < size; ++i) {
@@ -20,8 +27,16 @@ namespace mathfunc {
 }
 
 namespace auxiliary {
-    // Создаёт массив из n случайных целых (1–10)
+    /**
+     * @brief Создаёт массив случайных целых чисел
+     * @param n Требуемый размер массива
+     * @param out_size[out] Фактически созданный размер массива
+     * @return Указатель на новый массив или nullptr при ошибке выделения памяти
+     * @note Диапазон случайных чисел: от 1 до 10 включительно
+     * @warning Вызывающая сторона отвечает за освобождение памяти с помощью delete[]
+     */
     int* random_array(size_t n, size_t& out_size) {
+        // Создаёт массив из n случайных целых (1–10)
         if (n <= 0) {
             out_size = 0;
             return nullptr;
@@ -41,8 +56,14 @@ namespace auxiliary {
         return arr;
     }
 
-    // Вывод массива: до 10 чисел в строке
+    /**
+     * @brief Выводит массив на стандартный вывод с форматированием
+     * @param arr Указатель на массив для вывода
+     * @param size Количество элементов в массиве
+     * @note Элементы выводятся по 10 в строке, разделённые пробелами
+     */
     void print_array_by_10(const int* arr, size_t size) {
+        // Вывод массива: до 10 чисел в строке
         if (!arr) return;
         for (size_t i = 0; i < size; ++i) {
             std::cout << arr[i] << " ";
@@ -57,8 +78,16 @@ namespace auxiliary {
 }
 
 namespace file_work {
-    // Сохраняет массив в файл (по одному числу на строку)
+    /**
+     * @brief Сохраняет массив в текстовый файл
+     * @param arr Указатель на массив для сохранения
+     * @param size Количество элементов в массиве
+     * @param filename Имя файла для сохранения
+     * @return true если сохранение успешно, false в случае ошибки
+     * @note Каждый элемент сохраняется на отдельной строке
+     */
     bool save_array_to_file(const int* arr, size_t size, const std::string& filename) {
+        // Сохраняет массив в файл (по одному числу на строку)
         if (!arr) return false;
         std::ofstream file(filename);
         if (!file.is_open()) {
@@ -71,8 +100,16 @@ namespace file_work {
         return true;
     }
 
-    // Загружает массив из файла
+    /**
+     * @brief Загружает массив из текстового файла
+     * @param filename Имя файла для загрузки
+     * @param out_size[out] Количество загруженных элементов
+     * @return Указатель на новый массив или nullptr при ошибке
+     * @warning Вызывающая сторона отвечает за освобождение памяти с помощью delete[]
+     * @note Файл должен содержать по одному целому числу на каждой строке
+     */
     int* load_array_from_file(const std::string& filename, size_t& out_size) {
+        // Загружает массив из файла
         std::ifstream file(filename);
         if (!file.is_open()) {
             std::cerr << "Ошибка: не удалось открыть файл: " << filename << "\n";
