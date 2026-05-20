@@ -1,14 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.github.ondosh.database.Edit"
-            prefHeight="400.0" prefWidth="600.0">
+<VBox spacing="15.0" prefWidth="400" prefHeight="300"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.github.ondosh.database.controller.EditController">
+    <padding>
+        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+    </padding>
 
-</AnchorPane>
+    <Label text="Данные игры" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <GridPane hgap="10.0" vgap="10.0">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="30"/>
+            <ColumnConstraints percentWidth="70"/>
+        </columnConstraints>
+
+        <Label text="Название:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="titleField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Жанр:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="genreField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Цена:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="priceField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Рейтинг:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="ratingField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <HBox spacing="10.0" alignment="CENTER_RIGHT">
+        <Button text="Отмена" onAction="#onCancel" prefWidth="100"/>
+        <Button text="Сохранить" onAction="#onSave" prefWidth="100" style="-fx-base: #4CAF50;"/>
+    </HBox>
+</VBox>

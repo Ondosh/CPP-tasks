@@ -7,8 +7,6 @@ public class Game {
     private float price;
     private float rating;
 
-    // Конструктор по умолчанию будет лишним
-
     // Конструктор со всеми полями (без id, для добавления новой записи)
     public Game(String title, String genre, float price, float rating) {
         this.title = title;
