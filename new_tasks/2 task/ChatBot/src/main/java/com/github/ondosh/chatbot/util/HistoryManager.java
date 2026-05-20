@@ -12,6 +12,7 @@ import java.util.List;
 /**
  * Утилитарный класс для управления историей сообщений чата.
  * Отвечает за сохранение и загрузку истории переписки в файл.
+ * По MVC относится к модели проекта
  *
  * <p>История сохраняется в файл chat_history.txt в формате:
  * <pre>
@@ -92,6 +93,8 @@ public class HistoryManager {
 
         if (!file.exists()) return history;
 
+        // Открываем файл с буферизованным чтением, т.е. построчно
+        // Читаем 1 строку файла. В ней должно быть имя пользователя в формате "USER:имя"
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String firstLine = reader.readLine();
 

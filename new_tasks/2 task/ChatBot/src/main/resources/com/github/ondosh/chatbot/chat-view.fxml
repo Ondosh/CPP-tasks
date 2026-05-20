@@ -1,82 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Импорт необходимых классов JavaFX для использования в FXML -->
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.text.Font?>
+
 <!--
-  Корневой контейнер VBox (вертикальная компоновка)
-  - fx:controller: связывает разметку с контроллером ChatController
-  - spacing="12": отступ 12px между дочерними элементами
-  - style: тёмная тема оформления с отступами по краям
+  Подключение стилей через stylesheets
+  Путь к CSS файлу должен соответствовать структуре ресурсов
+  styleClass - это стиль с определённым названием в css-файле
+  stylesheets - это файл с списком и описанием стилей
+  fx:controller - связывает разметку с контроллером.
 -->
-        <!-- Объявление пространства имён -->
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.github.ondosh.chatbot.controller.ChatController"
-      spacing="12"
-      style="-fx-background-color: #1e1e2e; -fx-padding: 15;">
+      styleClass="chat-container"
+      stylesheets="styles-chat-view.css">
 
-    <!--
-      ListView для отображения истории сообщений чата
-      - fx:id: идентификатор для доступа из контроллера
-      - VBox.vgrow="ALWAYS": компонент растягивается на всё доступное пространство
-      - Стилизация: тёмный фон, скруглённые углы, шрифт Segoe UI, светлый текст
-      - -fx-control-inner-background: фон ячеек списка
-      - -fx-text-fill: цвет текста сообщений
-    -->
-    <ListView fx:id="messageList" VBox.vgrow="ALWAYS"
-              style="-fx-background-color: #2a2a3e;
-                     -fx-border-color: #44475a;
-                     -fx-border-radius: 8;
-                     -fx-background-radius: 8;
-                     -fx-font-family: 'Segoe UI';
-                     -fx-font-size: 13px;
-                     -fx-control-inner-background: #2a2a3e;
-                     -fx-text-fill: #f8f8f2;"/>
+    <!-- ListView для отображения истории сообщений чата -->
+    <ListView fx:id="messageList"
+              styleClass="message-list"
+              VBox.vgrow="ALWAYS"/>
 
-    <!--
-      Горизонтальная панель (HBox) для поля ввода и кнопки отправки
-      - spacing="10": отступ между элементами ввода
-    -->
+    <!-- Горизонтальная панель для поля ввода и кнопки отправки -->
     <HBox spacing="10">
 
-        <!--
-          TextField для ввода пользовательского сообщения
-          - fx:id: доступ к полю из контроллера
-          - promptText: подсказка для пользователя (на русском)
-          - HBox.hgrow="ALWAYS": поле растягивается на всю ширину
-          - onAction="#onSendMessage": обработчик нажатия Enter
-          - Стилизация: согласована с общей тёмной темой
-        -->
+        <!-- TextField для ввода пользовательского сообщения -->
         <TextField fx:id="inputField"
                    promptText="Введите сообщение..."
+                   styleClass="input-field"
                    HBox.hgrow="ALWAYS"
-                   onAction="#onSendMessage"
-                   style="-fx-background-color: #2a2a3e;
-                          -fx-text-fill: #f8f8f2;
-                          -fx-prompt-text-fill: #6272a4;
-                          -fx-border-color: #44475a;
-                          -fx-border-radius: 6;
-                          -fx-background-radius: 6;
-                          -fx-font-family: 'Segoe UI';
-                          -fx-font-size: 13px;
-                          -fx-padding: 8 12;"/>
+                   onAction="#onSendMessage"/>
 
-        <!--
-          Кнопка отправки сообщения
-          - text: надпись на кнопке (на русском)
-          - onAction="#onSendMessage": тот же обработчик, что и у TextField
-          - Стилизация: акцентный фиолетовый цвет (#bd93f9 из палитры Dracula),
-            жирный шрифт, курсор-рука при наведении
-        -->
-        <Button text="Отправить" onAction="#onSendMessage"
-                style="-fx-background-color: #bd93f9;
-                       -fx-text-fill: #1e1e2e;
-                       -fx-font-family: 'Segoe UI';
-                       -fx-font-weight: bold;
-                       -fx-font-size: 13px;
-                       -fx-background-radius: 6;
-                       -fx-padding: 8 16;
-                       -fx-cursor: hand;"/>
+        <!-- Кнопка отправки сообщения -->
+        <Button text="Отправить"
+                styleClass="send-button"
+                onAction="#onSendMessage"/>
     </HBox>
 
 </VBox>
