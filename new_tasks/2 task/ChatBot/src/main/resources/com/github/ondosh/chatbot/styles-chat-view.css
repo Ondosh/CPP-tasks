@@ -1,0 +1,75 @@
+/* styles.css - тема оформления чат-бота */
+
+/* Корневой контейнер */
+.root {
+    -fx-background-color: #1e1e2e;
+}
+
+/* Основной контейнер VBox */
+.chat-container {
+    -fx-background-color: #1e1e2e;
+    -fx-padding: 15;
+    -fx-spacing: 12;
+}
+
+/* ListView для сообщений */
+.message-list {
+    -fx-background-color: #2a2a3e;
+    -fx-border-color: #44475a;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-family: 'Segoe UI';
+    -fx-font-size: 13px;
+    -fx-control-inner-background: #2a2a3e;
+    -fx-text-fill: #f8f8f2;
+}
+
+/* Ячейки списка сообщений */
+.message-list .list-cell {
+    -fx-background-color: #2a2a3e;
+    -fx-text-fill: #f8f8f2;
+    -fx-padding: 8 12;
+}
+
+.message-list .list-cell:odd {
+    -fx-background-color: #2a2a3e;
+}
+
+/* Поле ввода текста */
+.input-field {
+    -fx-background-color: #2a2a3e;
+    -fx-text-fill: #f8f8f2;
+    -fx-prompt-text-fill: #6272a4;
+    -fx-border-color: #44475a;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-family: 'Segoe UI';
+    -fx-font-size: 13px;
+    -fx-padding: 8 12;
+}
+
+.input-field:focused {
+    -fx-border-color: #bd93f9;
+    -fx-border-width: 2px;
+}
+
+/* Кнопка отправки */
+/* */
+.send-button {
+    -fx-background-color: #bd93f9;
+    -fx-text-fill: #1e1e2e;
+    -fx-font-family: 'Segoe UI';
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.send-button:hover {
+    -fx-background-color: #ff79c6;
+}
+
+.send-button:pressed {
+    -fx-background-color: #8be9fd;
+}

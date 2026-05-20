@@ -2,6 +2,46 @@ package com.github.ondosh.chatbot.bot;
 
 import com.github.ondosh.chatbot.model.UserProfile;
 
+/**
+ * Гибридный бот, объединяющий возможности простого бота-парсера
+ * и нейросети GigaChat.
+ * <p>
+ * Относится к модели проекта согласно архитектурному паттерну MVC.
+ * </p>
+ *
+ * <h2>Принцип работы:</h2>
+ * <ol>
+ *   <li>Входящее сообщение сначала проверяется на наличие команд
+ *       (время, дата, математические операции, статистика).</li>
+ *   <li>Если команда не обнаружена, проверяются заготовленные фразы
+ *       (приветствия, прощания).</li>
+ *   <li>Если ничего не подошло, сообщение передаётся в нейросеть
+ *       GigaChat для генерации ответа.</li>
+ * </ol>
+ *
+ * <h2>Статистика сообщений:</h2>
+ * Класс отслеживает количество сообщений, отправленных пользователем
+ * и ботом, через делегирование методов объекту {@link SimpleBot}.
+ *
+ * <h2>Пример использования:</h2>
+ * <pre>
+ * HybridBot bot = new HybridBot();
+ * bot.setUserProfile(userProfile);
+ *
+ * String response = bot.getResponse("Привет");
+ * System.out.println(response);
+ *
+ * bot.countUserMessage();
+ * System.out.println("Сообщений пользователя: " + bot.getUserMessages());
+ * </pre>
+ *
+ * @author ondosh
+ * @version 1.0
+ * @see IBot
+ * @see GigaChatBot
+ * @see SimpleBot
+ * @see UserProfile
+ */
 public class HybridBot implements IBot {
 
     private final GigaChatBot   gigaChatBot = new GigaChatBot();
