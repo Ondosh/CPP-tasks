@@ -3,9 +3,8 @@ package com.github.ondosh.database.service;
 import com.github.ondosh.database.DAO.GameDAO;
 import com.github.ondosh.database.model.Game;
 
-/**
- * Сервисный слой — только валидация данных перед записью в БД.
- */
+import java.util.List;
+
 public class GameService {
 
     private final GameDAO gameDAO;
@@ -14,10 +13,6 @@ public class GameService {
         this.gameDAO = new GameDAO();
     }
 
-    /**
-     * Валидация объекта Game.
-     * Проверяет все поля на корректность.
-     */
     private void validate(Game game) {
         if (game.getTitle() == null || game.getTitle().isBlank())
             throw new IllegalArgumentException("Название не может быть пустым");
@@ -32,15 +27,27 @@ public class GameService {
             throw new IllegalArgumentException("Рейтинг должен быть от 0 до 10");
     }
 
-    // С проверкой
     public void addGame(Game game) {
         validate(game);
         gameDAO.addGame(game);
     }
 
-    // С проверкой
     public void updateGame(Game game, int id) {
         validate(game);
         gameDAO.updateGame(game, id);
+    }
+
+    // Новые методы:
+
+    public List<Game> getAllGames() {
+        return gameDAO.getAllGames();
+    }
+
+    public void deleteGame(int id) {
+        gameDAO.deleteGame(id);
+    }
+
+    public Game getGameById(int id) {
+        return gameDAO.getGameByID(id);
     }
 }

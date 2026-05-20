@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class DatabaseManager {
-    public static Connection connection;
+    private static Connection connection;
 
     // Чтение пароля из файла
     private static String getPasswordFromFile() {

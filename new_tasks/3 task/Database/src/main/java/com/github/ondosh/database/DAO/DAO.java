@@ -18,6 +18,4 @@ public interface DAO {
     void updateGame(Game game, int id);
 
     void deleteGame(int id);
-
-    List<Game> getSortedBy(String field); // сортировка по полю
 }

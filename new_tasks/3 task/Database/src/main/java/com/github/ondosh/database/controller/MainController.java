@@ -37,7 +37,6 @@ public class MainController {
     private final ObservableList<Game> allGames = FXCollections.observableArrayList();
     private final ObservableList<Game> gamesList = FXCollections.observableArrayList();
 
-    private final GameDAO gameDAO = new GameDAO();
     private final GameService gameService = new GameService();
 
     /**
@@ -69,12 +68,8 @@ public class MainController {
      */
     private void loadGames() {
         allGames.clear();
-        List<Game> games = gameDAO.getAllGames();
-        allGames.addAll(games);
-
-        // Применяем текущий фильтр (если есть поиск или сортировка)
+        allGames.addAll(gameService.getAllGames()); // было gameDAO
         applyFilters();
-
         statusLabel.setText("Загружено игр: " + allGames.size());
     }
 
@@ -95,10 +90,10 @@ public class MainController {
             filtered = FXCollections.observableArrayList(filtered);
             filtered.sort((g1, g2) -> {
                 return switch (sortField) {
-                    case "title"  -> g1.getTitle().compareToIgnoreCase(g2.getTitle());
-                    case "genre"  -> g1.getGenre().compareToIgnoreCase(g2.getGenre());
-                    case "price"  -> Float.compare(g1.getPrice(), g2.getPrice());
-                    case "rating" -> Float.compare(g2.getRating(), g1.getRating());
+                    case "Название" -> g1.getTitle().compareToIgnoreCase(g2.getTitle());
+                    case "Жанр"     -> g1.getGenre().compareToIgnoreCase(g2.getGenre());
+                    case "Цена"     -> Float.compare(g1.getPrice(), g2.getPrice());
+                    case "Рейтинг"  -> Float.compare(g2.getRating(), g1.getRating());
                     default -> 0;
                 };
             });
@@ -120,12 +115,13 @@ public class MainController {
     private void onAddButton() {
         Game editedGame = showDialog(null);
         if (editedGame != null) {
-            gameDAO.addGame(editedGame);
-            allGames.add(editedGame);  // добавляем в полный список
-            applyFilters();            // применяем фильтры
+            gameService.addGame(editedGame); // было gameDAO
+            allGames.add(editedGame);
+            applyFilters();
             statusLabel.setText("Добавлена игра: " + editedGame.getTitle());
         }
     }
+
 
     @FXML
     private void onEditButton() {
@@ -134,15 +130,11 @@ public class MainController {
             statusLabel.setText("Выберите игру для изменения");
             return;
         }
-
         Game editedGame = showDialog(selected);
         if (editedGame != null) {
-            gameDAO.updateGame(editedGame, editedGame.getId());
-            // Находим и обновляем в allGames
+            gameService.updateGame(editedGame, editedGame.getId()); // было gameDAO
             int index = allGames.indexOf(selected);
-            if (index >= 0) {
-                allGames.set(index, editedGame);
-            }
+            if (index >= 0) allGames.set(index, editedGame);
             applyFilters();
             statusLabel.setText("Изменена игра: " + editedGame.getTitle());
         }
@@ -155,9 +147,8 @@ public class MainController {
             statusLabel.setText("Выберите игру для удаления");
             return;
         }
-
-        gameDAO.deleteGame(selected.getId());
-        allGames.remove(selected);  // удаляем из полного списка
+        gameService.deleteGame(selected.getId()); // было gameDAO
+        allGames.remove(selected);
         applyFilters();
         statusLabel.setText("Игра удалена: " + selected.getTitle());
     }

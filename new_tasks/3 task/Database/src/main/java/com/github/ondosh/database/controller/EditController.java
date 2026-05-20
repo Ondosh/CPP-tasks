@@ -15,12 +15,13 @@ public class EditController {
 
     private Game result;
     private boolean approved = false;
-
+    private Game originalGame;
     /**
      * Заполняет поля данными существующей игры (для редактирования)
      */
     public void setGame(Game game) {
         if (game == null) return;
+        this.originalGame = game; // запоминаем
         titleField.setText(game.getTitle());
         genreField.setText(game.getGenre());
         priceField.setText(String.valueOf(game.getPrice()));
@@ -50,13 +51,15 @@ public class EditController {
         float price = Float.parseFloat(priceField.getText().trim());
         float rating = Float.parseFloat(ratingField.getText().trim());
 
-        // Если игра уже имеет id — это редактирование, иначе — создание
-        if (result != null && result.getId() > 0) {
-            result.setTitle(title);
-            result.setGenre(genre);
-            result.setPrice(price);
-            result.setRating(rating);
+        if (originalGame != null) {
+            // Редактирование — обновляем существующий объект
+            originalGame.setTitle(title);
+            originalGame.setGenre(genre);
+            originalGame.setPrice(price);
+            originalGame.setRating(rating);
+            result = originalGame;
         } else {
+            // Создание нового
             result = new Game(title, genre, price, rating);
         }
 

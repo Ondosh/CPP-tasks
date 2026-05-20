@@ -100,43 +100,6 @@ public class GameDAO implements DAO {
         }
     }
 
-    /**
-     * Можно сортировать по title, genre, price, rating
-     */
-    @Override
-    public List<Game> getSortedBy(String field) {
-        // Белый список допустимых полей — защита от SQL инъекций
-        // нельзя использовать PreparedStatement для названия колонки
-        List<String> allowedFields = List.of("title", "genre", "price", "rating");
-
-        if (!allowedFields.contains(field)) {
-            throw new IllegalArgumentException("Недопустимое поле сортировки: " + field);
-        }
-
-        String sql = "SELECT * FROM games ORDER BY " + field;
-        List<Game> games = new ArrayList<>();
-
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                games.add(new Game(
-                        rs.getInt("id"),
-                        rs.getString("title"),
-                        rs.getString("genre"),
-                        rs.getFloat("price"),
-                        rs.getFloat("rating")
-                ));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return games;
-    }
 
     @Override
     public void addGame(Game game) {
