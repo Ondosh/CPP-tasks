@@ -1,6 +1,5 @@
 package com.github.ondosh.database.controller;
 
-import com.github.ondosh.database.DAO.GameDAO;
 import com.github.ondosh.database.model.Game;
 import com.github.ondosh.database.service.GameService;
 import javafx.collections.FXCollections;
@@ -15,7 +14,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.List;
 
 public class MainController {
 
@@ -34,6 +32,7 @@ public class MainController {
     // Храним ВСЕ игры отдельно от отфильтрованных
     // Данные хранятся здесь, не в таблице
     // Это и есть использование шаблона наблюдатель
+    // Наблюдаемый объект тоже может наблюдать
     private final ObservableList<Game> allGames = FXCollections.observableArrayList();
     private final ObservableList<Game> gamesList = FXCollections.observableArrayList();
 
@@ -45,13 +44,16 @@ public class MainController {
     @FXML
     public void initialize() {
         // Привязываем колонки к полям класса Game
-        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-        genreColumn.setCellValueFactory(new PropertyValueFactory<>("genre"));
-        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-        ratingColumn.setCellValueFactory(new PropertyValueFactory<>("rating"));
+        // Если не title, а title123, то колонка titleColumn, то она ищет геттеры и сеттеры
+        // с названием getTitle23 и setTitle123.
+        titleColumn.setCellValueFactory(new PropertyValueFactory<Game, String>("title"));
+        genreColumn.setCellValueFactory(new PropertyValueFactory<Game, String>("genre"));
+        priceColumn.setCellValueFactory(new PropertyValueFactory<Game, Float>("price"));
+        ratingColumn.setCellValueFactory(new PropertyValueFactory<Game, Float>("rating"));
 
         // Привязываем список к таблице
         // gamesTable - наблюдатель, gamesList - наблюдаемый
+        // Может и наоборот
         gamesTable.setItems(gamesList);
 
         // Заполняем выпадающий список сортировки

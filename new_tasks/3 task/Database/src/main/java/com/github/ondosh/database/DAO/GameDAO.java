@@ -7,11 +7,15 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * DAO - Data Access Object. Это класс, изолирующий бизнес-логику от логики доступа к данным.
+ */
 public class GameDAO implements DAO {
     @Override
     public Game getGameByID(int id) {
         String sql = "SELECT * FROM games WHERE id = ?";
 
+        // получаем соединение с базой данных и сохраняем его в conn
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             // первому аргументу присваем значение из переменной id
@@ -41,7 +45,9 @@ public class GameDAO implements DAO {
     @Override
     public List<Game> getAllGames() {
         String sql = "SELECT * from games";
+        // List - интерфейс, Game - тип, который будет хранить лист, ArrayList - наследник List, полноценный класс
         List<Game> games = new ArrayList<>();
+        // получаем соединение с базой данных и сохраняем его в conn
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             // запускаем запрос который призван только вернуть данные

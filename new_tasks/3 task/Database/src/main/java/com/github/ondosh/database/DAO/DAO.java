@@ -4,6 +4,11 @@ import com.github.ondosh.database.model.Game;
 
 import java.util.List;
 
+/*
+* DAO - Data Access Object. Это класс, изолирующий бизнес-логику от логики доступа к данным.
+* Этот файл является интерфейсом.
+*/
+
 public interface DAO {
     // Добавляем игру в таблицу
     void addGame(Game game);

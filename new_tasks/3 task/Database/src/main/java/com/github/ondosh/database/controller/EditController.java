@@ -83,7 +83,7 @@ public class EditController {
         String ratingText = ratingField.getText().trim();
 
         if (title.isEmpty() || genre.isEmpty()) {
-            showAlert("Ошибка", "Название и жанр не могут быть пустыми");
+            showAlert("Название и жанр не могут быть пустыми");
             return false;
         }
 
@@ -92,24 +92,24 @@ public class EditController {
             float rating = Float.parseFloat(ratingText);
 
             if (price < 0) {
-                showAlert("Ошибка", "Цена не может быть отрицательной");
+                showAlert("Цена не может быть отрицательной");
                 return false;
             }
             if (rating < 0 || rating > 10) {
-                showAlert("Ошибка", "Рейтинг должен быть от 0 до 10");
+                showAlert("Рейтинг должен быть от 0 до 10");
                 return false;
             }
         } catch (NumberFormatException e) {
-            showAlert("Ошибка", "Цена и рейтинг должны быть числами");
+            showAlert("Цена и рейтинг должны быть числами");
             return false;
         }
 
         return true;
     }
 
-    private void showAlert(String title, String message) {
+    private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
+        alert.setTitle("Ошибка");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
