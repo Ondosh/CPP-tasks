@@ -38,8 +38,6 @@ public class GameService {
         gameDAO.updateGame(game, id);
     }
 
-    // Новые методы:
-
     public List<Game> getAllGames() {
         return gameDAO.getAllGames();
     }
