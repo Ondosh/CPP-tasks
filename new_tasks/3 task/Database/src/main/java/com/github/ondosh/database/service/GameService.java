@@ -6,11 +6,12 @@ import com.github.ondosh.database.model.Game;
 import java.util.List;
 
 public class GameService {
-
+    // final - нельзя переприсвоить ссылку
     private final GameDAO gameDAO;
 
     public GameService() {
         this.gameDAO = new GameDAO();
+        // this.gameDAO = new GameDAO(); - второй раз нельзя, будет ошибка
     }
 
     private void validate(Game game) {

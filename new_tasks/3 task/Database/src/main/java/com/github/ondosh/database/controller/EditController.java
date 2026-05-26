@@ -16,51 +16,43 @@ public class EditController {
     private Game result;
     private boolean approved = false;
     private Game originalGame;
-    /**
-     * Заполняет поля данными существующей игры (для редактирования)
-     */
+
     public void setGame(Game game) {
         if (game == null) return;
-        this.originalGame = game; // запоминаем
+        this.originalGame = game;
         titleField.setText(game.getTitle());
         genreField.setText(game.getGenre());
         priceField.setText(String.valueOf(game.getPrice()));
         ratingField.setText(String.valueOf(game.getRating()));
     }
 
-    /**
-     * Возвращает созданную/изменённую игру
-     */
     public Game getResult() {
         return result;
     }
 
-    /**
-     * Проверяет, нажал ли пользователь "Сохранить"
-     */
     public boolean isApproved() {
         return approved;
     }
 
     @FXML
     private void onSave() {
-        if (!validateInput()) return;
-
-        String title = titleField.getText().trim();
-        String genre = genreField.getText().trim();
-        float price = Float.parseFloat(priceField.getText().trim());
-        float rating = Float.parseFloat(ratingField.getText().trim());
+        // ParsedInput — вспомогательный record, чтобы вернуть сразу несколько значений
+        // из validateAndParse() без дублирования парсинга
+        ParsedInput input = validateAndParse();
+        if (input == null) return;
 
         if (originalGame != null) {
-            // Редактирование — обновляем существующий объект
-            originalGame.setTitle(title);
-            originalGame.setGenre(genre);
-            originalGame.setPrice(price);
-            originalGame.setRating(rating);
+            // Мутируем оригинальный объект напрямую — вызывающий код получит
+            // изменения через свою же ссылку, даже не вызывая getResult()
+            originalGame.setTitle(input.title());
+            originalGame.setGenre(input.genre());
+            originalGame.setPrice((float) input.price());
+            originalGame.setRating((float) input.rating());
+            // result намеренно указывает на тот же объект, что и originalGame —
+            // это не копия, а одна и та же ссылка
             result = originalGame;
         } else {
-            // Создание нового
-            result = new Game(title, genre, price, rating);
+            result = new Game(input.title(), input.genre(), (float) input.price(), (float) input.rating());
         }
 
         approved = true;
@@ -74,9 +66,10 @@ public class EditController {
     }
 
     /**
-     * Валидация введённых данных
+     * Валидирует поля и сразу парсит числа — один проход вместо двух.
+     * Возвращает null если данные невалидны (Alert уже показан внутри).
      */
-    private boolean validateInput() {
+    private ParsedInput validateAndParse() {
         String title = titleField.getText().trim();
         String genre = genreField.getText().trim();
         String priceText = priceField.getText().trim();
@@ -84,7 +77,7 @@ public class EditController {
 
         if (title.isEmpty() || genre.isEmpty()) {
             showAlert("Название и жанр не могут быть пустыми");
-            return false;
+            return null;
         }
 
         try {
@@ -93,18 +86,20 @@ public class EditController {
 
             if (price < 0) {
                 showAlert("Цена не может быть отрицательной");
-                return false;
+                return null;
             }
             if (rating < 0 || rating > 10) {
                 showAlert("Рейтинг должен быть от 0 до 10");
-                return false;
+                return null;
             }
+
+
+            return new ParsedInput(title, genre, price, rating);
+
         } catch (NumberFormatException e) {
             showAlert("Цена и рейтинг должны быть числами");
-            return false;
+            return null;
         }
-
-        return true;
     }
 
     private void showAlert(String message) {
@@ -119,4 +114,8 @@ public class EditController {
         Stage stage = (Stage) titleField.getScene().getWindow();
         stage.close();
     }
+
+    // record — компактный способ передать несколько значений без отдельного класса.
+    // Неизменяем: все поля final, equals/hashCode/toString генерируются автоматически
+    private record ParsedInput(String title, String genre, double price, double rating) {}
 }
