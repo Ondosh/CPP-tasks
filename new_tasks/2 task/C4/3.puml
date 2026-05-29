@@ -1,36 +1,43 @@
-@startuml
-!include <C4/C4_Component>
+@startuml C4_Component_BotEngine
 
-title Component diagram for Chat Controller
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 
-Container_Boundary(controller, "Chat Controller") {
-    Component(sendHandler, "Send Message Handler", "Обрабатывает отправку сообщения")
-    Component(profileHandler, "Profile Dialog Handler", "Опрос нового пользователя (возраст, город)")
-    Component(saveHandler, "Save Handler", "Сохраняет данные при закрытии")
-    Component(loadHandler, "Load Handler", "Загружает историю и профиль при старте")
+LAYOUT_WITH_LEGEND()
+
+title C4 Level 3 — Component: Bot Engine
+
+Person(user, "Пользователь", "Вводит сообщения")
+
+System_Ext(gigachat, "GigaChat API", "LLM от Сбера")
+
+Container_Boundary(bot_engine, "Bot Engine") {
+
+    Component(ibot, "IBot", "Java Interface", "Контракт для всех ботов.\nМетод: handle(User) → Message.")
+
+    Component(hybrid, "HybridBot", "Java Class", "Композитный бот.\nВыбирает стратегию:\nGigaChat или Simple.")
+
+    Component(giga, "GigaChatBot", "Java Class", "Вызывает GigaChat API.\nФормирует контекст из\nUserProfile и истории.")
+
+    Component(simple, "SimpleBot", "Java Class", "Отвечает по шаблонам\nбез обращения к API.\nФоллбэк-стратегия.")
+
 }
 
-Container_Boundary(ui, "JavaFX UI") {
-    Component(textField, "Input Field", "Поле ввода")
-    Component(listView, "Message List", "Список сообщений")
-}
+Container(gui, "GUI Layer", "JavaFX / Swing", "ChatController вызывает бота")
+Container(model, "Domain Model", "Java", "User, Message, UserProfile")
+Container(data, "Data & Util Layer", "Java", "HistoryManager, ProfileManager")
 
-Component(bot, "HybridBot", "GigaChatBot с заглушкой")
-Component(userModel, "User Model", "Данные пользователя")
-Component(profileModel, "UserProfile Model", "Профиль пользователя")
-Component(model, "Message Model", "Сообщение")
+Rel(gui, hybrid, "Вызывает handle(User)", "Java call")
+Rel(hybrid, ibot, "Реализует", "implements")
+Rel(giga, ibot, "Реализует", "implements")
+Rel(simple, ibot, "Реализует", "implements")
 
-Rel(sendHandler, listView, "Добавляет сообщение")
-Rel(sendHandler, userModel, "Добавляет сообщение в историю")
-Rel(sendHandler, bot, "Отправляет текст")
-Rel(sendHandler, profileHandler, "Перенаправляет ввод при опросе")
-Rel(profileHandler, profileModel, "Создаёт и сохраняет")
-Rel(loadHandler, userModel, "Загружает данные")
-Rel(loadHandler, bot, "Передаёт профиль и статистику")
-Rel(saveHandler, userModel, "Сохраняет историю")
-Rel(saveHandler, bot, "Сохраняет статистику")
+Rel(hybrid, giga, "Делегирует если есть профиль", "Java call")
+Rel(hybrid, simple, "Делегирует как фоллбэк", "Java call")
 
-Rel(listView, sendHandler, "Отображает")
-Rel(textField, sendHandler, "Передаёт текст")
+Rel(giga, gigachat, "Запрашивает ответ", "REST API / HTTPS")
+Rel(giga, model, "Читает UserProfile, User", "Java call")
+Rel(giga, data, "Читает историю через HistoryManager", "Java call")
+
+Rel(hybrid, model, "Передаёт User в дочерние боты", "Java call")
 
 @enduml

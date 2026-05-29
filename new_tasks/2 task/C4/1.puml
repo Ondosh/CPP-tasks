@@ -1,18 +1,22 @@
-@startuml
-!include <C4/C4_Context>
-!include <C4/C4_Container>
+@startuml C4_Context
 
-title System Context diagram for ChatBot Application
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
-Person(user, "Пользователь", "Человек, который общается с чат-ботом")
+LAYOUT_WITH_LEGEND()
 
-System(chatbot, "ChatBot Application", "JavaFX-приложение для общения с ИИ-ботом")
+title C4 Level 1 — Context: GigaChat Desktop Bot
 
-System_Ext(gigachat, "GigaChat API", "Внешний API от Сбера для генерации ответов")
-System_Ext(files, "Локальные файлы", "Хранилище истории, профиля и статистики")
+Person(user, "Пользователь", "Вводит сообщения в окно чат-бота")
 
-Rel(user, chatbot, "Отправляет сообщения, видит ответы", "UI")
-Rel(chatbot, gigachat, "Отправляет запросы, получает ответы", "HTTPS")
-Rel(chatbot, files, "Читает/пишет", "JSON/текст")
+System(app, "Desktop Chat Bot", "GUI-приложение на Java.\nОбщается с пользователем,\nхранит историю и профиль.")
+
+System_Ext(gigachat, "GigaChat API", "LLM от Сбера.\nГенерирует ответы на сообщения.")
+
+System_Ext(fs, "Файловая система", "Хранит историю переписки\nи профили пользователей (JSON).")
+
+Rel(user, app, "Вводит сообщения", "GUI (окно чата)")
+Rel(app, user, "Отображает ответы", "GUI (окно чата)")
+Rel(app, gigachat, "Запрашивает генерацию ответа", "REST API / HTTPS")
+Rel(app, fs, "Читает и сохраняет", "Локальные файлы")
 
 @enduml

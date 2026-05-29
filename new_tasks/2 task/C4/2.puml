@@ -1,29 +1,45 @@
-@startuml
-!include <C4/C4_Container>
-!include <C4/C4_Context>
+@startuml C4_Container
 
-title Container diagram for ChatBot Application
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-Person(user, "Пользователь")
+LAYOUT_WITH_LEGEND()
 
-System_Boundary(chatbot, "ChatBot Application") {
-    Container(ui, "JavaFX UI", "JavaFX", "Отображает чат, обрабатывает ввод пользователя")
-    Container(controller, "Chat Controller", "Java", "Управляет логикой чата, связывает UI и модель")
-    Container(bot, "Bot Engine", "Java", "Генерирует ответы (GigaChat или заглушка)")
-    Container(model, "Model Layer", "Java POJO", "User, Message, UserProfile")
-    Container(util, "Utilities", "Java", "Сохранение/загрузка, переключение сцен")
+title C4 Level 2 — Container: GigaChat Desktop Bot
+
+Person(user, "Пользователь", "Вводит сообщения в окно чат-бота")
+
+System_Ext(gigachat, "GigaChat API", "LLM от Сбера.\nГенерирует ответы.")
+
+System_Ext(fs, "Файловая система", "Локальные JSON-файлы.")
+
+System_Boundary(app, "Desktop Chat Bot") {
+
+    Container(gui, "GUI Layer", "JavaFX / Swing", "Окна приложения:\nэкран приветствия и экран чата.\nWelcomeController, ChatController.")
+
+    Container(bot_engine, "Bot Engine", "Java", "Логика выбора и вызова бота.\nGigaChatBot, SimpleBot, HybridBot.")
+
+    Container(profile_wizard, "Profile Wizard", "Java", "Пошаговый сбор профиля\nпользователя при первом запуске.\nProfileWizard, UserProfile.")
+
+    Container(data_layer, "Data & Util Layer", "Java", "Управление историей, профилем,\nстатистикой, сценами.\nHistoryManager, ProfileManager,\nStatsManager, SceneSwitcher.")
+
+    Container(model, "Domain Model", "Java", "Сущности приложения:\nUser, Message, CurrentUser.")
+
 }
 
-System_Ext(gigachat, "GigaChat API")
-System_Ext(fileSystem, "File System")
+Rel(user, gui, "Взаимодействует", "GUI events")
 
-Rel(user, ui, "Взаимодействует", "Клавиатура/мышь")
-Rel(ui, controller, "Вызывает события", "FXML binding")
-Rel(controller, bot, "Отправляет текст, получает ответ")
-Rel(controller, model, "Создаёт, хранит, обновляет")
-Rel(controller, util, "Сохраняет, загружает, переключает сцены")
-Rel(bot, gigachat, "HTTP-запросы с токеном", "HTTPS")
-Rel(util, fileSystem, "Читает/пишет")
-Rel(bot, util, "Обновляет статистику")
+Rel(gui, bot_engine, "Отправляет сообщение пользователя", "Java call")
+Rel(bot_engine, gui, "Возвращает ответ бота", "Java call")
+
+Rel(gui, profile_wizard, "Запускает сбор профиля", "Java call")
+Rel(profile_wizard, data_layer, "Сохраняет профиль", "Java call")
+
+Rel(bot_engine, gigachat, "Запрашивает генерацию ответа", "REST API / HTTPS")
+
+Rel(data_layer, fs, "Читает и пишет", "JSON-файлы")
+
+Rel(gui, data_layer, "Загружает историю, профиль, статистику", "Java call")
+Rel(bot_engine, model, "Использует", "Java call")
+Rel(gui, model, "Использует", "Java call")
 
 @enduml
