@@ -1,0 +1,36 @@
+@startuml
+!include <C4/C4_Component>
+
+title Component diagram for Chat Controller
+
+Container_Boundary(controller, "Chat Controller") {
+    Component(sendHandler, "Send Message Handler", "Обрабатывает отправку сообщения")
+    Component(profileHandler, "Profile Dialog Handler", "Опрос нового пользователя (возраст, город)")
+    Component(saveHandler, "Save Handler", "Сохраняет данные при закрытии")
+    Component(loadHandler, "Load Handler", "Загружает историю и профиль при старте")
+}
+
+Container_Boundary(ui, "JavaFX UI") {
+    Component(textField, "Input Field", "Поле ввода")
+    Component(listView, "Message List", "Список сообщений")
+}
+
+Component(bot, "HybridBot", "GigaChatBot с заглушкой")
+Component(userModel, "User Model", "Данные пользователя")
+Component(profileModel, "UserProfile Model", "Профиль пользователя")
+Component(model, "Message Model", "Сообщение")
+
+Rel(sendHandler, listView, "Добавляет сообщение")
+Rel(sendHandler, userModel, "Добавляет сообщение в историю")
+Rel(sendHandler, bot, "Отправляет текст")
+Rel(sendHandler, profileHandler, "Перенаправляет ввод при опросе")
+Rel(profileHandler, profileModel, "Создаёт и сохраняет")
+Rel(loadHandler, userModel, "Загружает данные")
+Rel(loadHandler, bot, "Передаёт профиль и статистику")
+Rel(saveHandler, userModel, "Сохраняет историю")
+Rel(saveHandler, bot, "Сохраняет статистику")
+
+Rel(listView, sendHandler, "Отображает")
+Rel(textField, sendHandler, "Передаёт текст")
+
+@enduml

@@ -1,0 +1,29 @@
+@startuml
+!include <C4/C4_Container>
+!include <C4/C4_Context>
+
+title Container diagram for ChatBot Application
+
+Person(user, "Пользователь")
+
+System_Boundary(chatbot, "ChatBot Application") {
+    Container(ui, "JavaFX UI", "JavaFX", "Отображает чат, обрабатывает ввод пользователя")
+    Container(controller, "Chat Controller", "Java", "Управляет логикой чата, связывает UI и модель")
+    Container(bot, "Bot Engine", "Java", "Генерирует ответы (GigaChat или заглушка)")
+    Container(model, "Model Layer", "Java POJO", "User, Message, UserProfile")
+    Container(util, "Utilities", "Java", "Сохранение/загрузка, переключение сцен")
+}
+
+System_Ext(gigachat, "GigaChat API")
+System_Ext(fileSystem, "File System")
+
+Rel(user, ui, "Взаимодействует", "Клавиатура/мышь")
+Rel(ui, controller, "Вызывает события", "FXML binding")
+Rel(controller, bot, "Отправляет текст, получает ответ")
+Rel(controller, model, "Создаёт, хранит, обновляет")
+Rel(controller, util, "Сохраняет, загружает, переключает сцены")
+Rel(bot, gigachat, "HTTP-запросы с токеном", "HTTPS")
+Rel(util, fileSystem, "Читает/пишет")
+Rel(bot, util, "Обновляет статистику")
+
+@enduml

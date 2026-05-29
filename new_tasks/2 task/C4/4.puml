@@ -1,0 +1,71 @@
+@startuml
+title Class diagram - Core entities
+
+class User {
+    - name: String
+    - history: List<Message>
+    + addMessage(Message)
+    + getHistory(): List<Message>
+}
+
+class Message {
+    - text: String
+    - sender: Sender
+    + toString(): String
+}
+
+enum Sender {
+    USER
+    BOT
+}
+
+class UserProfile {
+    - name: String
+    - age: int
+    - city: String
+}
+
+class ChatController {
+    - inputField: TextField
+    - messageList: ListView<Message>
+    - user: User
+    - bot: HybridBot
+    - profileState: ProfileState
+    + setUser(User)
+    + saveAll()
+    - onSendMessage()
+    - handleProfileInput(String)
+}
+
+class HybridBot {
+    - currentBot: IBot
+    - stats: BotStats
+    + getResponse(String): String
+    + setUserProfile(UserProfile)
+}
+
+interface IBot {
+    + getResponse(String): String
+    + getBotName(): String
+    + isAvailable(): boolean
+}
+
+class GigaChatBot {
+    - client: HttpClient
+    - accessToken: String
+    - userProfile: UserProfile
+    + getResponse(String): String
+    + setUserProfile(UserProfile)
+}
+
+User "1" o-- "*" Message : агрегация
+ChatController o-- User : агрегация
+ChatController --> HybridBot : композиция
+ChatController --> ListView : ассоциация
+ChatController ..> Message : зависимость
+ChatController ..> UserProfile : зависимость
+HybridBot --> IBot : реализация (реализует)
+GigaChatBot ..|> IBot : implements
+GigaChatBot --> UserProfile : агрегация
+
+@enduml

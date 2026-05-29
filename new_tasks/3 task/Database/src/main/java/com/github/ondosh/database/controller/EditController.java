@@ -2,7 +2,7 @@ package com.github.ondosh.database.controller;
 
 import com.github.ondosh.database.model.Game;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -13,9 +13,18 @@ public class EditController {
     @FXML private TextField priceField;
     @FXML private TextField ratingField;
 
+    // Лэйблы предупреждений под каждым полем
+    @FXML private Label titleError;
+    @FXML private Label genreError;
+    @FXML private Label priceError;
+    @FXML private Label ratingError;
+
     private Game result;
     private boolean approved = false;
     private Game originalGame;
+
+    private static final String ERROR_STYLE =
+            "-fx-border-color: #e53935; -fx-border-width: 1.5px; -fx-border-radius: 3px;";
 
     public void setGame(Game game) {
         if (game == null) return;
@@ -26,30 +35,28 @@ public class EditController {
         ratingField.setText(String.valueOf(game.getRating()));
     }
 
-    public Game getResult() {
-        return result;
+    @FXML
+    public void initialize() {
+        // Снимаем подсветку как только пользователь начинает редактировать поле
+        titleField.textProperty().addListener((obs, o, n) -> clearError(titleField, titleError));
+        genreField.textProperty().addListener((obs, o, n) -> clearError(genreField, genreError));
+        priceField.textProperty().addListener((obs, o, n) -> clearError(priceField, priceError));
+        ratingField.textProperty().addListener((obs, o, n) -> clearError(ratingField, ratingError));
     }
 
-    public boolean isApproved() {
-        return approved;
-    }
+    public Game getResult() { return result; }
+    public boolean isApproved() { return approved; }
 
     @FXML
     private void onSave() {
-        // ParsedInput — вспомогательный record, чтобы вернуть сразу несколько значений
-        // из validateAndParse() без дублирования парсинга
         ParsedInput input = validateAndParse();
         if (input == null) return;
 
         if (originalGame != null) {
-            // Мутируем оригинальный объект напрямую — вызывающий код получит
-            // изменения через свою же ссылку, даже не вызывая getResult()
             originalGame.setTitle(input.title());
             originalGame.setGenre(input.genre());
             originalGame.setPrice((float) input.price());
             originalGame.setRating((float) input.rating());
-            // result намеренно указывает на тот же объект, что и originalGame —
-            // это не копия, а одна и та же ссылка
             result = originalGame;
         } else {
             result = new Game(input.title(), input.genre(), (float) input.price(), (float) input.rating());
@@ -66,48 +73,73 @@ public class EditController {
     }
 
     /**
-     * Валидирует поля и сразу парсит числа — один проход вместо двух.
-     * Возвращает null если данные невалидны (Alert уже показан внутри).
+     * Валидирует все поля сразу, выставляя подсветку и сообщения.
+     * Возвращает null если хотя бы одно поле невалидно.
      */
     private ParsedInput validateAndParse() {
-        String title = titleField.getText().trim();
-        String genre = genreField.getText().trim();
-        String priceText = priceField.getText().trim();
+        clearAllErrors();
+
+        String title  = titleField.getText().trim();
+        String genre  = genreField.getText().trim();
+        String priceText  = priceField.getText().trim();
         String ratingText = ratingField.getText().trim();
 
-        if (title.isEmpty() || genre.isEmpty()) {
-            showAlert("Название и жанр не могут быть пустыми");
-            return null;
+        boolean valid = true;
+
+        if (title.isEmpty()) {
+            setError(titleField, titleError, "Название не может быть пустым");
+            valid = false;
+        }
+        if (genre.isEmpty()) {
+            setError(genreField, genreError, "Жанр не может быть пустым");
+            valid = false;
+        }
+
+        float price = 0, rating = 0;
+
+        try {
+            price = Float.parseFloat(priceText);
+            if (price < 0) {
+                setError(priceField, priceError, "Цена не может быть отрицательной");
+                valid = false;
+            }
+        } catch (NumberFormatException e) {
+            setError(priceField, priceError, "Введите корректное число");
+            valid = false;
         }
 
         try {
-            float price = Float.parseFloat(priceText);
-            float rating = Float.parseFloat(ratingText);
-
-            if (price < 0) {
-                showAlert("Цена не может быть отрицательной");
-                return null;
-            }
+            rating = Float.parseFloat(ratingText);
             if (rating < 0 || rating > 10) {
-                showAlert("Рейтинг должен быть от 0 до 10");
-                return null;
+                setError(ratingField, ratingError, "Рейтинг должен быть от 0 до 10");
+                valid = false;
             }
-
-
-            return new ParsedInput(title, genre, price, rating);
-
         } catch (NumberFormatException e) {
-            showAlert("Цена и рейтинг должны быть числами");
-            return null;
+            setError(ratingField, ratingError, "Введите корректное число");
+            valid = false;
         }
+
+        return valid ? new ParsedInput(title, genre, price, rating) : null;
     }
 
-    private void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Ошибка");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    private void setError(TextField field, Label errorLabel, String message) {
+        field.setStyle(ERROR_STYLE);
+        errorLabel.setText(message);
+        errorLabel.setVisible(true);
+        errorLabel.setManaged(true);
+    }
+
+    private void clearError(TextField field, Label errorLabel) {
+        field.setStyle("");
+        errorLabel.setVisible(false);
+        errorLabel.setManaged(false);
+    }
+
+    private void clearAllErrors() {
+        clearError(titleField,  titleError);
+        clearError(genreField,  genreError);
+        clearError(priceField,  priceError);
+        clearError(ratingField, ratingError);
     }
 
     private void closeDialog() {
@@ -115,7 +147,5 @@ public class EditController {
         stage.close();
     }
 
-    // record — компактный способ передать несколько значений без отдельного класса.
-    // Неизменяем: все поля final, equals/hashCode/toString генерируются автоматически
     private record ParsedInput(String title, String genre, double price, double rating) {}
 }

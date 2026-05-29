@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+
+title System Context diagram for ChatBot Application
+
+Person(user, "Пользователь", "Человек, который общается с чат-ботом")
+
+System(chatbot, "ChatBot Application", "JavaFX-приложение для общения с ИИ-ботом")
+
+System_Ext(gigachat, "GigaChat API", "Внешний API от Сбера для генерации ответов")
+System_Ext(files, "Локальные файлы", "Хранилище истории, профиля и статистики")
+
+Rel(user, chatbot, "Отправляет сообщения, видит ответы", "UI")
+Rel(chatbot, gigachat, "Отправляет запросы, получает ответы", "HTTPS")
+Rel(chatbot, files, "Читает/пишет", "JSON/текст")
+
+@enduml
